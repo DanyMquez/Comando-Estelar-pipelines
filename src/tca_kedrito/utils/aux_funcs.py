@@ -6,16 +6,6 @@ from itertools import combinations
 
 # Eliminar columnas específicas
 def drop_columns_inplace(df, columns):
-    """
-    Elimina columnas específicas de un df con inplace=True para no consumir memoria. 
-
-    Parámetros:
-    df (pd.DataFrame): El DataFrame del cual se eliminarán las columnas.
-    columns (list): Una lista de nombres de columnas a eliminar.
-
-    Raises:
-    KeyError: Si alguna de las columnas especificadas no existe en el DataFrame.
-    """
     existing_cols = [col for col in columns if col in df.columns]
     missing_cols = [col for col in columns if col not in df.columns]
     if missing_cols:
@@ -23,17 +13,8 @@ def drop_columns_inplace(df, columns):
     if existing_cols:
         df.drop(columns=existing_cols, inplace=True)
 
+# Carga del dataset con limpieza general
 def load_dataset(df, **kwargs):
-    """
-    Carga un dataset desde un archivo CSV.
-
-    Parámetros: 
-        filepath (str): Ruta al archivo CSV.
-        **kwargs: Argumentos adicionales para pd.read_csv.
-
-    Returns:
-        pd.DataFrame: Datos cargados. 
-    """
     try:
         drop_columns_inplace(df, ['h_nom', 'h_correo_e', 'h_codigop', 'cluster'])
     except Exception as e:
@@ -65,15 +46,6 @@ def get_numeric_and_categorical_columns(df: pd.DataFrame, numeric_as_category=No
 
 # Extraer día o mes de una columna de fechas
 def date_extraction(df, columna_fecha, tipo, sufijo):
-    """
-    Agrega una columna al DataFrame con el nombre del día o del mes extraído de una columna de fechas.
-
-    Parámetros:
-        df (pd.DataFrame): El DataFrame a modificar.
-        columna_fecha (str): Nombre de la columna de tipo datetime.
-        sufijo (str): Sufijo para la nueva columna (ej. 'reservacion', 'entrada', etc).
-        tipo (str): 'dia' para día de la semana, 'mes' para mes. Default: 'dia'.
-    """
     if columna_fecha not in df.columns:
         print(f"La columna '{columna_fecha}' no existe en el DataFrame.")
         return
@@ -88,17 +60,6 @@ def date_extraction(df, columna_fecha, tipo, sufijo):
 
 # Convertir columnas a tipos de datos específicos
 def convert_columns_type(df, columns, dtype):
-    """
-    Convierte las columnas especificadas de un DataFrame al tipo de dato indicado.
-
-    Parámetros:
-        df (pd.DataFrame): El DataFrame a modificar.
-        columns (list): Lista de nombres de columnas a convertir.
-        dtype (str): Tipo de dato destino: 'datetime', 'numeric' o 'categorical'.
-
-    Raises:
-        ValueError: Si el tipo de dato no es válido.
-    """
     for col in columns:
         if col not in df.columns:
             #print(f"Columna '{col}' no encontrada en el DataFrame.")
@@ -117,17 +78,6 @@ def convert_columns_type(df, columns, dtype):
 
 # Eliminar outliers usando el método IQR
 def remove_outliers_iqr(series, factor=1.5):
-    """
-    Remove outliers from a pandas Series using the IQR method.
-    Returns a boolean mask where True means the value is not an outlier.
-
-    Parameters:
-        series (pd.Series): The input Series.
-        factor (float): The IQR multiplier (default 1.5).
-
-    Returns:
-        pd.Series: Boolean mask with True for non-outlier values.
-    """
     Q1 = series.quantile(0.25)
     Q3 = series.quantile(0.75)
     IQR = Q3 - Q1
