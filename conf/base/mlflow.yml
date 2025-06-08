@@ -1,0 +1,55 @@
+# Configuración de servidor -------------------
+
+# Poner credenciales de mlflow en un archivo credentials.yml como un dict
+# y referenciarlo en este archivo mlflow.yml
+# se exportarán como variables de entorno
+# Si quieres establecer algunas credenciales, por ejemplo AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+# > en `credentials.yml`:
+# tus_credenciales_mlflow:
+#   AWS_ACCESS_KEY_ID: 132456
+#   AWS_SECRET_ACCESS_KEY: 132456
+# > en este archivo `mlflow.yml`:
+# credenciales: tus_credenciales_mlflow
+
+server:
+  mlflow_tracking_uri: null # Usando mlflow.get_tracking_uri() como default
+  mlflow_registry_uri: null # Usando mlflow_tracking_uri will como mlflow default
+  credentials: null  # debe haber una llave válida en credentials.yml que referencíe al dict creado previamente
+  request_header_provider: # solo útil usando expiring token, ver https://github.com/Galileo-Galilei/kedro-mlflow/issues/357
+    type: null # El path a una class : my_project.pipelines.module.MyClass. Debe heredar de https://github.com/mlflow/mlflow/blob/master/mlflow/tracking/request_header/abstract_request_header_provider.py#L4
+    pass_context: False 
+    init_kwargs: {} # cualquier kwargs para ir a la class cuando se inicialice
+
+tracking:
+  # Se puede hacer una lista para deshabilitar el log de mlflow en pipelines específicos.
+  # Correr "kedro run --pipeline=<pipeline_name>" no ejecutará el log en los parámetros seleccionados
+  # en un run nuevo de mlflow.
+
+  disable_tracking:
+    disable_autologging: True  # si es True, no se ejecutará el autologging de mlflow en los pipelines.
+    pipelines: []
+
+  experiment:
+    name: servidor
+    create_experiment_kwargs: # Utilizado para crear un experimento si no existe. Si el experimento ya existe, se ignora.
+      artifact_location: null # permite especificar la ubicación de un artifact diferente para el utilizado globalmente por mlflow server 
+      tags: null  # dict de tags para el experimento
+    restore_if_deleted: True  # si el nombre del experimento fuese borrado se restaurará automáticamente al nombre original. 
+
+  run:
+    id: null # si `id` es None, un nuevo run será creado
+    name: null # si `name` es None, pipeline se utilizará como el nombre del run. 
+    nested: True  # Permitir sub-runs en los nodos
+
+  params:
+    dict_params:
+      flatten: False  # No separar los parámetros cuando se haga el log
+      recursive: True  # Dictionary flattening aplicado recursivamente 
+      sep: "." # Separador para recursive flattening
+    long_params_strategy: fail # "fail" | "tag" | "truncate" Qué hacer con parámetros que exceden el límite de mlflow (actualmente 250 caracteres).
+
+# Parámetros del ui -----------------
+
+ui:
+  port: "5000" # puerto a utilizar para el ui. Default es 5000.
+  host: "127.0.0.1"  # el host utilizado para el ui. Default es "127.0.0.1".

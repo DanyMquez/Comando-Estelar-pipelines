@@ -1,0 +1,45 @@
+# Here you can define all your datasets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+iar_Reservaciones:
+  type: kedro_datasets.pandas.CSVDataset
+  filepath: data/01_raw/iar_Reservaciones.csv
+
+reservas_clean:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/02_intermediate/reservas_clean.parquet
+
+reservas_clean_dedup:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/03_primary/reservas_clean_dedup.parquet
+
+reservas_nocard:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/03_primary/reservas_nocard.parquet
+
+reservas_engeneered:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/04_feature/reservas_engeneered.parquet
+
+reservas_prepped:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/05_model_input/reservas_prepped.parquet
+
+reservas_clustered:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/07_model_output/reservas_clustered.parquet
+  
+reservas__svm_nocard:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/04_feature/reservas_svm_nocard.parquet
+
+reservas__svm_card:
+  type: kedro_datasets.pandas.ParquetDataset
+  filepath: data/05_model_input/reservas_svm_card.parquet
+
+svm_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/svm_model.pkl
+  versioned: True
